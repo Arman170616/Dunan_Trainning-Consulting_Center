@@ -1,43 +1,82 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Calendar, MapPin, ArrowLeft } from "lucide-react"
 
-const activities = [
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+
+interface Activity {
+  id: number
+  title: string
+  date: string
+  location: string
+  description: string
+  tag: string
+  tag_color: string
+  image_url: string | null
+}
+
+const DEFAULT_ACTIVITIES: Activity[] = [
   {
+    id: 1,
     title: "ورشة عمل القانون الدولي الإنساني",
-    date: "15 مارس 2026",
+    date: "2026-03-15",
     location: "مسقط، سلطنة عُمان",
-    desc: "ورشة عمل متخصصة حول تطبيقات القانون الدولي الإنساني في النزاعات المعاصرة",
+    description: "ورشة عمل متخصصة حول تطبيقات القانون الدولي الإنساني في النزاعات المعاصرة",
     tag: "ورشة عمل",
-    color: "primary",
+    tag_color: "primary",
+    image_url: null,
   },
   {
+    id: 2,
     title: "مؤتمر حماية المدنيين",
-    date: "22 أبريل 2026",
+    date: "2026-04-22",
     location: "الدوحة، قطر",
-    desc: "مؤتمر إقليمي يجمع خبراء القانون الدولي لمناقشة آليات حماية المدنيين",
+    description: "مؤتمر إقليمي يجمع خبراء القانون الدولي لمناقشة آليات حماية المدنيين",
     tag: "مؤتمر",
-    color: "teal",
+    tag_color: "teal",
+    image_url: null,
   },
   {
+    id: 3,
     title: "دورة تدريبية للقوات المسلحة",
-    date: "10 مايو 2026",
+    date: "2026-05-10",
     location: "أبوظبي، الإمارات",
-    desc: "برنامج تدريبي مكثف لتأهيل أفراد القوات المسلحة على مبادئ القانون الإنساني",
+    description: "برنامج تدريبي مكثف لتأهيل أفراد القوات المسلحة على مبادئ القانون الإنساني",
     tag: "دورة تدريبية",
-    color: "primary",
+    tag_color: "primary",
+    image_url: null,
   },
   {
+    id: 4,
     title: "ندوة مصادر القانون الدولي",
-    date: "5 يونيو 2026",
+    date: "2026-06-05",
     location: "الكويت",
-    desc: "ندوة أكاديمية حول مصادر القانون الدولي الإنساني: الاتفاقيات المكتوبة والعرف الدولي",
+    description: "ندوة أكاديمية حول مصادر القانون الدولي الإنساني: الاتفاقيات المكتوبة والعرف الدولي",
     tag: "ندوة",
-    color: "teal",
+    tag_color: "teal",
+    image_url: null,
   },
 ]
 
+function formatDate(dateStr: string) {
+  try {
+    return new Date(dateStr).toLocaleDateString("ar-OM", { day: "numeric", month: "long", year: "numeric" })
+  } catch {
+    return dateStr
+  }
+}
+
 export default function ActivitiesSection() {
+  const [activities, setActivities] = useState<Activity[]>(DEFAULT_ACTIVITIES)
+
+  useEffect(() => {
+    fetch(`${API}/api/activities/`)
+      .then(r => r.json())
+      .then((data: Activity[]) => { if (data.length) setActivities(data) })
+      .catch(() => {})
+  }, [])
+
   return (
     <section id="activities" className="relative py-24 lg:py-32 overflow-hidden animated-bg">
       <div className="absolute inset-0 geometric-pattern opacity-10" />
@@ -60,19 +99,19 @@ export default function ActivitiesSection() {
         <div className="grid md:grid-cols-2 gap-6">
           {activities.map((act, i) => (
             <div
-              key={i}
+              key={act.id ?? i}
               className="glass-card rounded-3xl p-7 lg:p-8 group hover:scale-[1.02] hover:border-primary/25 transition-all duration-500 relative overflow-hidden"
             >
               {/* Decorative top line */}
               <div className={`absolute top-0 right-0 left-0 h-0.5 ${
-                act.color === "teal" ? "bg-gradient-to-l from-transparent via-[var(--teal)]/50 to-transparent" : "bg-gradient-to-l from-transparent via-primary/50 to-transparent"
+                act.tag_color === "teal" ? "bg-linear-to-l from-transparent via-(--teal)/50 to-transparent" : "bg-linear-to-l from-transparent via-primary/50 to-transparent"
               }`} />
 
               {/* Tag */}
               <div className="mb-5">
                 <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-semibold border ${
-                  act.color === "teal" 
-                    ? "bg-[var(--teal)]/10 text-[var(--teal)] border-[var(--teal)]/20"
+                  act.tag_color === "teal"
+                    ? "bg-(--teal)/10 text-(--teal) border-(--teal)/20"
                     : "bg-primary/10 text-primary border-primary/20"
                 }`}>
                   {act.tag}
@@ -83,12 +122,12 @@ export default function ActivitiesSection() {
                 {act.title}
               </h4>
 
-              <p className="text-sm text-muted-foreground leading-[1.8] mb-6">{act.desc}</p>
+              <p className="text-sm text-muted-foreground leading-[1.8] mb-6">{act.description}</p>
 
               <div className="flex flex-wrap items-center gap-5 text-xs text-muted-foreground mb-6">
                 <span className="flex items-center gap-2">
                   <Calendar className="h-3.5 w-3.5 text-primary" />
-                  {act.date}
+                  {formatDate(act.date)}
                 </span>
                 <span className="flex items-center gap-2">
                   <MapPin className="h-3.5 w-3.5 text-primary" />

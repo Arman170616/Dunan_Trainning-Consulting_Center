@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react"
 import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react"
 
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+
 interface SubItem {
   label: string
   href: string
@@ -59,7 +61,7 @@ const navLinks: NavLink[] = [
   { label: "تواصل معنا", href: "#contact" },
 ]
 
-const newsItems = [
+const DEFAULT_NEWS = [
   "يدعو معهد دونان للاستشارات والتدريب الكفاءات من المواطنين والمقيمين في دول مجلس التعاون للانضمام إلى الهيئة التدريبية",
   "افتتاح التسجيل في دورة مقدمة عن القانون الدولي الإنساني",
   "تعاون جديد مع اللجنة الدولية للصليب الأحمر في مجال التدريب",
@@ -95,12 +97,22 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<number | null>(null)
   const [mobileExpanded, setMobileExpanded] = useState<number | null>(null)
+  const [newsItems, setNewsItems] = useState<string[]>(DEFAULT_NEWS)
   const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  useEffect(() => {
+    fetch(`${API}/api/news/`)
+      .then(r => r.json())
+      .then((data: { title: string }[]) => {
+        if (data.length) setNewsItems(data.map(n => n.title))
+      })
+      .catch(() => {})
   }, [])
 
   const handleMouseEnter = (index: number) => {

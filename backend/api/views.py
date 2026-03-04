@@ -3,8 +3,17 @@ from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import TrainerRegistration, ContactMessage
-from .serializers import TrainerRegistrationSerializer, ContactMessageSerializer
+from .models import (
+    TrainerRegistration, ContactMessage,
+    NewsItem, Activity, MediaItem, LibraryItem,
+    Lecture, TrainingCourse, TrainerProfile,
+)
+from .serializers import (
+    TrainerRegistrationSerializer, ContactMessageSerializer,
+    NewsItemSerializer, ActivitySerializer, MediaItemSerializer,
+    LibraryItemSerializer, LectureSerializer, TrainingCourseSerializer,
+    TrainerProfileSerializer,
+)
 
 
 def send_registration_email(data):
@@ -103,3 +112,64 @@ class ContactMessageView(APIView):
         messages = ContactMessage.objects.all()
         serializer = ContactMessageSerializer(messages, many=True)
         return Response(serializer.data)
+
+
+# ── Dynamic content views (read-only) ─────────────────────────────────────────
+
+class NewsListView(APIView):
+    def get(self, request):
+        items = NewsItem.objects.filter(is_active=True)
+        return Response(NewsItemSerializer(items, many=True).data)
+
+
+class ActivityListView(APIView):
+    def get(self, request):
+        items = Activity.objects.filter(is_active=True)
+        return Response(ActivitySerializer(items, many=True, context={'request': request}).data)
+
+
+class MediaItemListView(APIView):
+    def get(self, request):
+        qs = MediaItem.objects.filter(is_active=True)
+        media_type = request.query_params.get('type')
+        if media_type:
+            qs = qs.filter(type=media_type)
+        return Response(MediaItemSerializer(qs, many=True, context={'request': request}).data)
+
+
+class LibraryItemListView(APIView):
+    def get(self, request):
+        qs = LibraryItem.objects.filter(is_active=True)
+        item_type = request.query_params.get('type')
+        if item_type:
+            qs = qs.filter(type=item_type)
+        return Response(LibraryItemSerializer(qs, many=True, context={'request': request}).data)
+
+
+class LectureListView(APIView):
+    def get(self, request):
+        items = Lecture.objects.filter(is_active=True)
+        return Response(LectureSerializer(items, many=True).data)
+
+
+class TrainingCourseListView(APIView):
+    def get(self, request):
+        items = TrainingCourse.objects.filter(is_active=True)
+        return Response(TrainingCourseSerializer(items, many=True).data)
+
+
+class TrainerProfileListView(APIView):
+    def get(self, request):
+        items = TrainerProfile.objects.filter(is_active=True)
+        return Response(TrainerProfileSerializer(items, many=True, context={'request': request}).data)
+
+
+class StatsView(APIView):
+    """Returns item counts for the library section."""
+    def get(self, request):
+        return Response({
+            'videos': MediaItem.objects.filter(is_active=True, type='video').count(),
+            'photos': MediaItem.objects.filter(is_active=True, type='photo').count(),
+            'books': LibraryItem.objects.filter(is_active=True, type='book').count(),
+            'research': LibraryItem.objects.filter(is_active=True, type='research').count(),
+        })
