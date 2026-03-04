@@ -1,20 +1,19 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { toast } from "sonner"
 import { UserPlus, X, Upload, CheckCircle, Sparkles, Loader2 } from "lucide-react"
 
 export default function RecruitmentBanner() {
   const [showModal, setShowModal] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
   const [fileName, setFileName] = useState("")
   const formRef = useRef<HTMLFormElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
     setLoading(true)
 
     const form = formRef.current!
@@ -33,6 +32,10 @@ export default function RecruitmentBanner() {
         body: formData,
       })
       if (res.ok) {
+        toast.success("تم التسجيل بنجاح", {
+          description: "شكراً لتقديمك. سنتواصل معك عند توفر فرصة تدريبية مناسبة.",
+          duration: 5000,
+        })
         setSubmitted(true)
         setTimeout(() => {
           setSubmitted(false)
@@ -42,10 +45,11 @@ export default function RecruitmentBanner() {
         }, 3000)
       } else {
         const data = await res.json()
-        setError(Object.values(data).flat().join(" | "))
+        const msg = Object.values(data).flat().join(" | ")
+        toast.error("حدث خطأ", { description: msg })
       }
     } catch {
-      setError("تعذّر الاتصال بالخادم. يرجى المحاولة لاحقاً.")
+      toast.error("تعذّر الاتصال بالخادم", { description: "يرجى المحاولة مرة أخرى لاحقاً." })
     } finally {
       setLoading(false)
     }
@@ -162,12 +166,6 @@ export default function RecruitmentBanner() {
                     للانضمام إلى الهيئة التدريبية لمعهد دونان
                   </p>
                 </div>
-
-                {error && (
-                  <div className="mb-4 rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-destructive text-center">
-                    {error}
-                  </div>
-                )}
 
                 <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-5">
                   <div className="grid sm:grid-cols-2 gap-5">

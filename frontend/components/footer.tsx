@@ -43,7 +43,7 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/30 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-primary/5" />
                 <svg
                   width="24"
                   height="24"

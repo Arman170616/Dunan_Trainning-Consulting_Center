@@ -11,6 +11,7 @@ import IHLSourcesSection from "@/components/ihl-sources-section"
 import MediaSection from "@/components/media-section"
 import ContactSection from "@/components/contact-section"
 import Footer from "@/components/footer"
+import FloatingContact from "@/components/floating-contact"
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
       <MediaSection />
       <ContactSection />
       <Footer />
+      <FloatingContact />
     </main>
   )
 }

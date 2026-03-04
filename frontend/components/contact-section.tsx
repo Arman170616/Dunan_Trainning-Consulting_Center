@@ -1,17 +1,16 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { toast } from "sonner"
 import { Mail, Phone, MapPin, Send, CheckCircle, MessageCircle, Loader2 } from "lucide-react"
 
 export default function ContactSection() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
     setLoading(true)
 
     const form = formRef.current!
@@ -29,6 +28,10 @@ export default function ContactSection() {
         body: JSON.stringify(body),
       })
       if (res.ok) {
+        toast.success("تم إرسال رسالتك بنجاح", {
+          description: "سنتواصل معك في أقرب وقت ممكن.",
+          duration: 5000,
+        })
         setSubmitted(true)
         setTimeout(() => {
           setSubmitted(false)
@@ -36,10 +39,10 @@ export default function ContactSection() {
         }, 4000)
       } else {
         const data = await res.json()
-        setError(Object.values(data).flat().join(" | "))
+        toast.error("حدث خطأ", { description: Object.values(data).flat().join(" | ") })
       }
     } catch {
-      setError("تعذّر الاتصال بالخادم. يرجى المحاولة لاحقاً.")
+      toast.error("تعذّر الاتصال بالخادم", { description: "يرجى المحاولة مرة أخرى لاحقاً." })
     } finally {
       setLoading(false)
     }
@@ -153,12 +156,6 @@ export default function ContactSection() {
               <div className="absolute top-0 right-0 left-0 h-0.5 bg-linear-to-l from-transparent via-primary/40 to-transparent" />
 
               <h3 className="text-lg font-bold text-foreground mb-7">أرسل لنا رسالة</h3>
-
-              {error && (
-                <div className="mb-5 rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-destructive text-center">
-                  {error}
-                </div>
-              )}
 
               {submitted ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-5">

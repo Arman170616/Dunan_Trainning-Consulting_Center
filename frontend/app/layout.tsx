@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Noto_Kufi_Arabic } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const notoKufi = Noto_Kufi_Arabic({
@@ -12,7 +13,6 @@ const notoKufi = Noto_Kufi_Arabic({
 export const metadata: Metadata = {
   title: 'معهد دونان للاستشارات والتدريب | القانون الدولي الإنساني',
   description: 'معهد دونان للاستشارات والتدريب - مؤسسة رائدة في مجال القانون الدولي الإنساني في منطقة الخليج العربي. تدريب واستشارات وبناء قدرات في القانون الإنساني واتفاقيات جنيف.',
-  generator: 'v0.app',
   keywords: [
     'القانون الدولي الإنساني',
     'القانون الإنساني',
@@ -95,6 +95,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className={`${notoKufi.variable} font-sans antialiased`}>
         {children}
+        <Toaster position="top-center" richColors />
         <Analytics />
       </body>
     </html>
