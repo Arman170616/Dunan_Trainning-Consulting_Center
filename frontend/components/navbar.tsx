@@ -222,7 +222,7 @@ export default function Navbar() {
               {/* Mobile contact info */}
               <div className="flex items-center gap-4 px-4 py-3 border-b border-border/50 mb-2">
                 <a
-                  href="https://wa.me/96872220480"
+                  href="https://api.whatsapp.com/send?phone=96872220480"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 text-xs text-muted-foreground"

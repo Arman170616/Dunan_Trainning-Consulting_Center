@@ -74,7 +74,7 @@ export default function ContactSection() {
                 <div className="flex flex-col gap-6">
                   {/* Phone / WhatsApp */}
                   <a
-                    href="https://wa.me/96872220480"
+                    href="https://api.whatsapp.com/send?phone=96872220480"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-start gap-4 group"

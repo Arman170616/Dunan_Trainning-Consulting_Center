@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Phone, MessageCircle, X } from "lucide-react"
 
 const PHONE = "+96872220480"
-const WHATSAPP = "https://wa.me/96872220480"
+const WHATSAPP = "https://api.whatsapp.com/send?phone=96872220480"
 
 export default function FloatingContact() {
   const [open, setOpen] = useState(false)

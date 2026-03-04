@@ -51,7 +51,7 @@ export default function Footer() {
             {/* Contact in footer */}
             <div className="flex flex-wrap items-center gap-4">
               <a
-                href="https://wa.me/96872220480"
+                href="https://api.whatsapp.com/send?phone=96872220480"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass rounded-xl px-4 py-2.5 flex items-center gap-2 text-xs text-muted-foreground hover:text-green-400 hover:border-green-500/20 transition-all"
